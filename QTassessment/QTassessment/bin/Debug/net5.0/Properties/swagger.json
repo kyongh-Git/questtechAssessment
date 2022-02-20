@@ -1,0 +1,800 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "A mini inventory system.",
+    "version": "1.0.0",
+    "title": "TMS Inventory",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "matt.luck@landtrafficcontrol.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host": "tms-inventory.test.com",
+  "basePath": "/",
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "paths": {
+    "/item-types": {
+      "get": {
+        "tags": [
+          "itemType"
+        ],
+        "summary": "Find item types",
+        "description": "",
+        "operationId": "findItemTypes",
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful get",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ItemType"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "itemType"
+        ],
+        "summary": "Add a new item type to inventory",
+        "description": "",
+        "operationId": "addItemType",
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "ItemType object that needs to be added to the system",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ItemTypeForCreate"
+            }
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/item-types/{itemTypeId}": {
+      "get": {
+        "tags": [
+          "itemType"
+        ],
+        "summary": "Get ItemType by id",
+        "description": "",
+        "operationId": "getItemTypeById",
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "parameters": [
+          {
+            "name": "itemTypeId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful get"
+          },
+          "404": {
+            "description": "Item Type not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "itemType"
+        ],
+        "summary": "Update an existing pet",
+        "description": "",
+        "operationId": "updateItemType",
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "itemTypeId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "ItemTypeForUpdate object that needs to be updated",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ItemTypeForUpdate"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "ItemType not found"
+          },
+          "422": {
+            "description": "Validation exception unprocessable entity"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "itemType"
+        ],
+        "summary": "Deletes an item type from the system",
+        "description": "",
+        "operationId": "deleteItemType",
+        "parameters": [
+          {
+            "name": "itemTypeId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful delete, no content"
+          },
+          "404": {
+            "description": "Item Type not found"
+          }
+        }
+      }
+    },
+    "/items": {
+      "get": {
+        "tags": [
+          "item"
+        ],
+        "summary": "Get all items",
+        "description": "Endpoint retreives all items in database",
+        "operationId": "findItems",
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Item"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "item"
+        ],
+        "summary": "Create an item",
+        "description": "Endpoint to create an item",
+        "operationId": "createItem",
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "responses": {
+          "200": {
+            "description": "Created successfully",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "422": {
+            "description": "Unprocessable entity"
+          }
+        }
+      }
+    },
+    "/items/findByItemType": {
+      "get": {
+        "tags": [
+          "item"
+        ],
+        "summary": "Finds Items by ItemType",
+        "description": "Multiple ItemType values can be provided with comma separated strings",
+        "operationId": "findItemsByItemType",
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "description": "ItemType values that need to be considered for filter",
+            "required": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Item"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/items/{itemId}": {
+      "get": {
+        "tags": [
+          "item"
+        ],
+        "summary": "Find item by ID",
+        "description": "Returns a single item",
+        "operationId": "getItemById",
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "description": "ID of item to return",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Item"
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Item not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "item"
+        ],
+        "summary": "Updates a item in the store with form data",
+        "description": "",
+        "operationId": "updateItemWithForm",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "description": "ID of item that needs to be updated",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "name",
+            "in": "formData",
+            "description": "Updated name of the item",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "in": "formData",
+            "description": "Updated status of the item",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "Invalid input"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "item"
+        ],
+        "summary": "Deletes a item",
+        "description": "",
+        "operationId": "deleteItem",
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "api_key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "itemId",
+            "in": "path",
+            "description": "Item id to delete",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Item not found"
+          }
+        }
+      }
+    },
+    "/items/{itemId}/inspections": {
+      "get": {
+        "tags": [
+          "inspection"
+        ],
+        "summary": "Get inspections for an item",
+        "description": "",
+        "operationId": "findInspectionsForItem",
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful get",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Inspection"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "inspection"
+        ],
+        "summary": "Create inspection for an item",
+        "description": "",
+        "operationId": "createInspectionForItem",
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "InspectionForCreate object that needs to be added to the system",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/InspectionForCreate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful create",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        }
+      }
+    },
+    "/items/{itemId}/inspections/{inspectionId}": {
+      "get": {
+        "tags": [
+          "inspection"
+        ],
+        "summary": "Get inspection for an item by id",
+        "description": "",
+        "operationId": "findInspectionForItemById",
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          },
+          {
+            "name": "inspectionId",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful get",
+            "schema": {
+              "$ref": "#/definitions/Inspection"
+            }
+          },
+          "404": {
+            "description": "Inspection or item not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "inspection"
+        ],
+        "summary": "Update inspection for an item by id",
+        "description": "",
+        "operationId": "updateInspectionForItemById",
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          },
+          {
+            "name": "inspectionId",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "InspectionForUpdate object that needs to update entity in system",
+            "schema": {
+              "$ref": "#/definitions/InspectionForUpdate"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful, No Content"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Item or inspection not found"
+          },
+          "422": {
+            "description": "Unprocessable entity"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "inspection"
+        ],
+        "summary": "Delete an inspection for an item by id",
+        "description": "",
+        "operationId": "deleteInspectionForItemById",
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          },
+          {
+            "name": "inspectionId",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful delete no content"
+          },
+          "404": {
+            "description": "Item or inspection not found"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "InspectionForCreate": {
+      "type": "object",
+      "required": [
+        "itemId",
+        "condition",
+        "dateOfInspection",
+        "inspectorName"
+      ],
+      "properties": {
+        "itemId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "dateOfInspection": {
+          "type": "string",
+          "format": "MM/dd/yyyy"
+        },
+        "inspectorName": {
+          "type": "string",
+          "example": "John Smith"
+        },
+        "condition": {
+          "type": "string",
+          "description": "Condition Status",
+          "enum": [
+            "new",
+            "like new",
+            "good",
+            "used",
+            "damaged",
+            "needs replacement"
+          ]
+        }
+      },
+      "xml": {
+        "name": "InspectionForCreate"
+      }
+    },
+    "InspectionForUpdate": {
+      "type": "object",
+      "required": [
+        "itemId",
+        "condition",
+        "dateOfInspection",
+        "inspectorName"
+      ],
+      "properties": {
+        "itemId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "dateOfInspection": {
+          "type": "string",
+          "format": "MM/dd/yyyy"
+        },
+        "inspectorName": {
+          "type": "string",
+          "example": "John Smith"
+        },
+        "condition": {
+          "type": "string",
+          "description": "Condition Status",
+          "enum": [
+            "new",
+            "like new",
+            "good",
+            "used",
+            "damaged",
+            "needs replacement"
+          ]
+        }
+      },
+      "xml": {
+        "name": "InspectionForUpdate"
+      }
+    },
+    "Inspection": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "itemId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "dateOfInspection": {
+          "type": "string",
+          "format": "MM/dd/yyyy"
+        },
+        "inspectorName": {
+          "type": "string",
+          "example": "John Smith"
+        },
+        "condition": {
+          "type": "string",
+          "description": "Condition Status",
+          "enum": [
+            "new",
+            "like new",
+            "good",
+            "used",
+            "damaged",
+            "needs replacement"
+          ]
+        }
+      },
+      "xml": {
+        "name": "Inspection"
+      }
+    },
+    "ItemTypeForCreate": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      },
+      "xml": {
+        "name": "ItemTypeForCreate"
+      }
+    },
+    "ItemTypeForUpdate": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      },
+      "xml": {
+        "name": "ItemTypeForUpdate"
+      }
+    },
+    "ItemType": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "xml": {
+        "name": "ItemType"
+      }
+    },
+    "Item": {
+      "type": "object",
+      "required": [
+        "name",
+        "itemTypeId",
+        "purchaseOrderNumber"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "itemTypeId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "itemType": {
+          "$ref": "#/definitions/ItemType"
+        },
+        "name": {
+          "type": "string",
+          "example": "Good Year All Season Deluxe"
+        }
+      },
+      "xml": {
+        "name": "Item"
+      }
+    },
+    "ApiResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "type": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
